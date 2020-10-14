@@ -500,11 +500,21 @@ class ZNB(VisaInstrument):
         channels = ChannelList(self, "VNAChannels", self.CHANNEL_CLASS,
                                snapshotable=True)
         self.add_submodule("channels", channels)
+
         if init_s_params:
-            for i in range(1, num_ports + 1):
-                for j in range(1, num_ports + 1):
-                    ch_name = 'S' + str(i) + str(j)
+            if init_s_params is True:
+                for i in range(1, num_ports + 1):
+                    for j in range(1, num_ports + 1):
+                        ch_name = 'S' + str(i) + str(j)
+                        self.add_channel(ch_name)
+            else: 
+                for key in init_s_params:
+                    if not key.startswith('S') or len(key) != 3: 
+                        raise ValueError('Channel indicators should be of the form S##.')
+                    if int(key[1] > num_ports) or int(key[2] > num_ports):
+                         raise ValueError('Channel index invalid')
                     self.add_channel(ch_name)
+                    
             self.channels.lock()
             self.display_sij_split()
             self.channels.autoscale()
