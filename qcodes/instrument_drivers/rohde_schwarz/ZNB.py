@@ -507,16 +507,17 @@ class ZNB(VisaInstrument):
                     for j in range(1, num_ports + 1):
                         ch_name = 'S' + str(i) + str(j)
                         self.add_channel(ch_name)
+                self.display_sij_split()
             else: 
-                for key in init_s_params:
-                    if not key.startswith('S') or len(key) != 3: 
+                for ch_name in init_s_params:
+                    if not ch_name.startswith('S') or len(ch_name) != 3: 
                         raise ValueError('Channel indicators should be of the form S##.')
-                    if int(key[1] > num_ports) or int(key[2] > num_ports):
+                    if int(ch_name[1]) > num_ports or int(ch_name[2]) > num_ports:
                          raise ValueError('Channel index invalid')
                     self.add_channel(ch_name)
-                    
+                self.write(f'DISP:LAY GRID;:DISP:LAY:GRID {len(init_s_params)},1')
+
             self.channels.lock()
-            self.display_sij_split()
             self.channels.autoscale()
 
         self.update_display_on()
