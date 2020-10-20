@@ -390,6 +390,7 @@ class Station(Metadatable, DelegateAttributes):
 
     def load_instrument(self, identifier: str,
                         revive_instance: bool = False,
+                        update_snapshot: bool = True,
                         **kwargs: Any) -> Instrument:
         """
         Creates an :class:`~.Instrument` instance as described by the
@@ -571,7 +572,7 @@ class Station(Metadatable, DelegateAttributes):
                 instr if len(parts) < 2 else
                 resolve_instrument_identifier(instr, '.'.join(parts[:-1])))
             add_parameter_from_dict(local_instr, parts[-1], options)
-        self.add_component(instr)
+        self.add_component(instr, update_snapshot=update_snapshot)
         update_monitor()
         return instr
 
